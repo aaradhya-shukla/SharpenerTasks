@@ -22,11 +22,19 @@ function saveData(e){
     del.className="delete";
     del.setAttribute("value","Delete");
     del.textContent="Delete";
+    //edit button
+    let edit=document.createElement("button");
+    edit.className="edit";
+    edit.textContent="Edit";
     p.appendChild(del);
+    p.appendChild(edit);
     p.appendChild(document.createElement('br'));
 
     div.appendChild(p);
+    // to delete event
     del.addEventListener('click',removeBtn);
+    // adding event listner to edit
+    edit.addEventListener('click',editData);
 }
 function removeBtn(e){
     e.preventDefault();
@@ -40,5 +48,19 @@ function removeBtn(e){
         
         // console.log(div.children);
         // div.removeChild(p);
+    }
+}
+function editData(e){
+    e.preventDefault();
+    if (e.target.className.contains="edit"){
+        let p=e.target.parentNode;
+        let a=p.parentNode;
+        console.log(p.textContent.substring(2,30));
+        let obj=JSON.parse(localStorage.getItem(p.textContent.substring(2,30)));
+        localStorage.removeItem(p.textContent.substring(2,30));
+        div.removeChild(p);
+        document.getElementById("name").value=obj.name;
+        document.getElementById("phone").value=obj.phone;
+        document.getElementById("email").value=obj.email;
     }
 }
