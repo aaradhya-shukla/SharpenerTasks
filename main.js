@@ -1,57 +1,47 @@
-let form=document.getElementById("my-form");
-form.addEventListener("submit",addExpense);
-let div=document.getElementsByClassName("row");
-let id=1;
-
-function addExpense(e){
-    e.preventDefault();
-    let user=document.getElementById("user").value;
-    let expense=document.getElementById("Expense").value;
-    let description=document.getElementById("Description").value;
-    let type=document.querySelector("#Expensetype").value;
-    if(user ==="" || expense === "" || description === ""){
-        alert("Fill details to continue");
-        return;
-    }
-    
-    let userObj={user:user,expense:expense,description:description,type:type};
-    let p=document.createElement("p");
-    p.textContent=` * ${expense} - ${description} - ${type}`
-    let del=document.createElement('button')
-    let edit=document.createElement('button')
-    del.className="delete"
-    del.setAttribute("value","delete expense")
-    del.textContent="delete expense"
-    p.appendChild(del)
-    edit.className=`edit${id}`
-    edit.setAttribute("value","edit expense")
-    edit.textContent="edit expense"
-    p.appendChild(edit)
-    div[0].appendChild(p)
-    del.addEventListener("click",deleteExpense);
-    edit.addEventListener("click",editExpesne);
-    axios.post("https://crudcrud.com/api/56fdfbca95374b9599d96b82e4b95754/booking/",userObj).then((res)=>{
+let form=document.getElementById('my-form');
+form.addEventListener("submit",book);
+let arr=[];
+function book(e){
+    e.preventDefault()
+    let name=document.getElementById("name").value;
+    let email=document.getElementById("email").value;
+    let userObj={name:name,email:email}
+    axios.post("https://crudcrud.com/api/95cfd471008f45b48929c2f6859b352b/meet",userObj).then((res)=>{
         console.log(res.status)
+    }).catch((err)=>console.log(err));
+    form.reset()
+    axios.get("https://crudcrud.com/api/95cfd471008f45b48929c2f6859b352b/meet").then((res)=>{
+        showData(res)
     }).catch((err)=>{
-        console.error(err);
+        console.log(err)
     })
-    id+=1;
-    form.reset();
-
 }
 
-function deleteExpense(e){
-    console.log(10000)
-    let div1=e.target.parentNode.parentNode;
-    div1.removeChild(e.target.parentNode)
+function showData(res){
+    for(let i=0; i<res.data.length;i++){
+        let del=document.createElement("button");
+        let edit=document.createElement("button")
+        del.setAttribute('id',`${res.data[i]._id}`)
+        edit.setAttribute('id',`${res.data[i]._id}`);
+        del.textContent='delete'
+        edit.textContent='edit'
+
+        del.addEventListener("click",delt)
+        let ele=document.createElement('p')
+        ele.innerHTML=`<h3>${res.data[i].name}-${res.data[i].email}</h3>`;
+        ele.appendChild(del)
+        ele.appendChild(edit)
+        document.body.appendChild(ele)
+    }
 }
 
-function editExpesne(e){
-    let userObj=JSON.parse(localStorage.getItem(e.target.className));
-    let div1=e.target.parentNode.parentNode;
-    div1.removeChild(e.target.parentNode)
-    document.getElementById("user").value=userObj.user;
-    document.getElementById("Expense").value=userObj.expense;
-    document.getElementById("Description").value=userObj.description;
-    document.getElementById("Expensetype").reset;
+function delt(e){
+    console.log(e.target.id)
+    axios.delete(`https://crudcrud.com/api/95cfd471008f45b48929c2f6859b352b/meet/${e.target.id}`).then((res)=>
+    console.log("res.status")).catch((err)=>console.log(err))
+}
+function edit(e){
+    
+    axios.put(`https://crudcrud.com/api/95cfd471008f45b48929c2f6859b352b/meet/${e.target.id}`,).then((res)=>
+    console.log("res.status")).catch((err)=>console.log(err))
 }
