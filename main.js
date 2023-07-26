@@ -14,7 +14,7 @@ function addExpense(e){
         return;
     }
     
-    let userObj=JSON.stringify({user:user,expense:expense,description:description,type:type});
+    let userObj={user:user,expense:expense,description:description,type:type};
     let p=document.createElement("p");
     p.textContent=` * ${expense} - ${description} - ${type}`
     let del=document.createElement('button')
@@ -30,7 +30,11 @@ function addExpense(e){
     div[0].appendChild(p)
     del.addEventListener("click",deleteExpense);
     edit.addEventListener("click",editExpesne);
-    localStorage.setItem(edit.className,userObj)
+    axios.post("https://crudcrud.com/api/56fdfbca95374b9599d96b82e4b95754/booking/",userObj).then((res)=>{
+        console.log(res.status)
+    }).catch((err)=>{
+        console.error(err);
+    })
     id+=1;
     form.reset();
 
