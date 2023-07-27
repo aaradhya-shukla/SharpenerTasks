@@ -1,63 +1,60 @@
-show()
+// always display on screen
 function show(){
-    axios.get('https://crudcrud.com/api/95cfd471008f45b48929c2f6859b352b/book').then((res)=>{
-        for (let i=0;i<res.data.length;i++){
-            let del=document.createElement("button")
-            let edit=document.createElement("button")
-            let ele=document.createElement("p")
-            // setting attribute
-            del.setAttribute("id",`${res.data[i]._id}`)
-            edit.setAttribute("id",`${res.data[i]._id}`)
-            ele.setAttribute("id",`${res.data[i]._id}`)
-            del.textContent="delete"
-            edit.textContent="edit"
-            // adding event listeners
-            del.addEventListener("click",delt);
-            edit.addEventListener("click",editt);
-            // adding to parent 
-            ele.textContent=`${res.data[i].name}-${res.data[i].email}`
-            ele.appendChild(del)
-            ele.appendChild(edit)
-            document.body.appendChild(ele)
-        }
-    }).catch((error)=>{console.log(error)
-    return;})
-
+    axios.get('https://crudcrud.com/api/a5e26affbd1c47238bc8572a7b4d2743/products').then((res)=>{
+        createEle(res.data)
+    })
 }
+// delete product from screen
 
-let form=document.getElementById("my-form");
+// add product on screen
+
+// adding producto backend
+
+form=document.getElementById("my-form");
 form.addEventListener("submit",add);
 
 function add(e){
     e.preventDefault()
+    let sp=document.getElementById("sp").value;
     let name=document.getElementById("name").value;
-    let email=document.getElementById("email").value;
-    let userObj={name:name,email:email};
-    console.log(userObj)
-    //post call
-    axios.post('https://crudcrud.com/api/95cfd471008f45b48929c2f6859b352b/book',userObj).then((res)=>show()).
+    let category=document.getElementById("category").value;
+    let prodObj={sp:sp,name:name,category:category};
+    // making a post request to crud crud
+    axios.post('https://crudcrud.com/api/a5e26affbd1c47238bc8572a7b4d2743/products',prodObj).then((res)=>{
+        prodObj._id=res.data._id
+        createEle([prodObj])
+    }).
     catch((err)=>console.log(err))
-    form.reset()
 }
 
-function delt(e){
-    document.body.removeChild(e.target.parentNode);
-    axios.delete(`https://crudcrud.com/api/95cfd471008f45b48929c2f6859b352b/book/${e.target.id}`).then((res)=>
-    console.log(res.status)).catch((err)=>console.log(err));
-
-}
-
-function editt(e){
-    document.body.removeChild(e.target.parentNode);
-    axios.get(`https://crudcrud.com/api/95cfd471008f45b48929c2f6859b352b/book/${e.target.id}`).then((res)=>{
-        update(res)
-    }).catch((error)=>console.log(error))
-    axios.delete(`https://crudcrud.com/api/95cfd471008f45b48929c2f6859b352b/book/${e.target.id}`).then((res)=>
-    console.log(res.status)).catch((err)=>console.log(err));
-}
-
-function update(res){
-    document.getElementById("name").value=res.data.name
-    document.getElementById("email").value=res.data.email
+function createEle(data){
+    for(let i=0;i<data.length;i++){
+        let del=document.createElement("button");
+        del.setAttribute("id",`${data[i]._id}`);
+        del.textContent="Delete Product";
+        del.setAttribute("name",`${data[i].category}`)
+        del.addEventListener("click",delt);
+        let li=document.createElement("li");
+        li.textContent="Rs "+`${data[i].sp}-${data[i].category}-${data[i].name}`;
+        li.appendChild(del);
+        console.log(li)
+        let ul=document.getElementById(`${data[i].category}`)
+        ul.appendChild(li)
+        console.log(del)
+    }
     
 }
+
+
+function delt(e){
+    e.preventDefault()
+    console.log(e.target.id)
+    axios.delete(`https://crudcrud.com/api/a5e26affbd1c47238bc8572a7b4d2743/products/${e.target.id}`).then((res)=>console.log("res.status")).
+    catch((err)=>console.log(err));
+    let ul=document.getElementById(`${e.target.name}`)
+    ul.removeChild(e.target.parentNode);
+}
+
+
+// 'https://crudcrud.com/api/0f6f155a2c924d86afbdb452ecb65db5/products'
+show()
